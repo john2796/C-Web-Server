@@ -58,13 +58,14 @@ int send_response(int fd, char *header, char *content_type, void *body, int cont
   ///////////////////
   // IMPLEMENT ME! //
   ///////////////////
-  int response_length = snprintf(response, "%s\n"
-                                           "Content-Type: %s\n"
-                                           "Content_length: %d\n"
-                                           "Connection: close\n"
-                                           "\n"
-                                           "%s",
-                                 haeder, content_type, response_length, body);
+  int response_length = snprintf(response, max_response_size,
+                                 "%s\n"
+                                 "Content-Type: %s\n"
+                                 "Content-Length: %d\n"
+                                 "Connection: close\n"
+                                 "\n",
+                                 header, content_type, content_length);
+
   // Send it all!
   int rv = send(fd, response, response_length, 0);
 
@@ -82,16 +83,18 @@ int send_response(int fd, char *header, char *content_type, void *body, int cont
 void get_d20(int fd)
 {
   // Generate a random number between 1 and 20 inclusive
-
   ///////////////////
   // IMPLEMENT ME! //
   ///////////////////
+  int random_num = (rand() % 20) + 1;
+  char response_body[16];
+  sprintf(response_body, "%d\n", random_num);
 
   // Use send_response() to send it back as text/plain data
-
   ///////////////////
   // IMPLEMENT ME! //
   ///////////////////
+  send_response(fd, "HTTP/1.1 200 OK", "text/plain", response_body, strlen(response_body));
 }
 
 /**
@@ -129,6 +132,26 @@ void get_file(int fd, struct cache *cache, char *request_path)
   ///////////////////
   // IMPLEMENT ME! //
   ///////////////////
+  struct cache_entry *cache_entry = cache_get(cache, request_path);
+  if (cache_entry != NULL)
+  {
+    send_response(fd, "HTTP/1.1 200 OK", cache_entry->content_type, cache_entry->content, cache_entry->content_length);
+  }
+  else
+  {
+    char filepath[4096];
+    struct file_data *filedata;
+    char *mime_type;
+    // comapre path
+    if (strcmp(request_path, "/") == 0 || strcmp(request_path, "/index.html") == 0)
+    {
+      snprintf(filepath, sizeof filepath, "%s/index.html", SERVER_ROOT);
+    }
+    else
+    {
+      // ....
+    }
+  }
 }
 
 /**
