@@ -7,6 +7,12 @@ Server steps:
 - Build response
 - Close the connection
 - Repeat
+
+  `sprintf()` for creating the HTTP response.
+  `strlen()` for computing content length.
+  `sprintf()` also returns the total number of bytes in the result string, which might be helpful.
+
+
 */
 
 /* scanf ---->
@@ -17,7 +23,6 @@ X-Header: whatever
 X-Header-2: whatever
 
 */
-/*
 #include <stdio.h>
 int main(void)
 {
@@ -35,7 +40,6 @@ int main(void)
   printf("method: %s\n", method); // GET
   printf("path: %s\n", path);     // /foobar.html
 }
- */
 // ============================================
 // sprintf ------>
 /*

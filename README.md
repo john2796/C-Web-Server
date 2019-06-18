@@ -69,7 +69,7 @@ _Read through all the main and stretch goals before writing any code to get an o
 
 #### Part 1
 
-1. Implement `send_response()`.
+1.[x] Implement `send_response()`.
 
    This function is responsible for formatting all the pieces that make up an HTTP response into the proper format that clients expect. In other words, it needs to build a complete HTTP response with the given parameters. It should write the response to the string in the `response` variable.
    
