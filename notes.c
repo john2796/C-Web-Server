@@ -68,5 +68,4 @@ int main(void)
 
   printf("%s\n", response);
 }
-
 // DAY 2 -------------->
