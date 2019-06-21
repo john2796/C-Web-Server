@@ -90,7 +90,7 @@ result string, which might be helpful. For getting the current time for the Date
 
 You can test whether you've gotten `send_response` working by calling the `resp_404` function from somewhere inside the `main` function and passing it the `newfd` socket (make sure you do this _after_ the `newfd` socket has been initialized by the `accept` system call in the while loop). If the client receives the 404 response when you make a request to the server, then that's a pretty clear indication that your `send_response` is working.
 
-2. Examine `handle_http_request()` in the file `server.c`.
+2.[x] Examine `handle_http_request()` in the file `server.c`.
 
    You'll want to parse the first line of the HTTP request header to see if this is a `GET` or `POST` request, and to see what the path is. You'll use this information to decide which handler function to call.
 
@@ -111,7 +111,7 @@ You can test whether you've gotten `send_response` working by calling the `resp_
    If you can't find an appropriate handler, call `resp_404()` instead to give
    them a "404 Not Found" response.
 
-3. Implement the `get_d20()` handler. This will call `send_response()`.
+3. [x]Implement the `get_d20()` handler. This will call `send_response()`.
 
    See above at the beginning of the assignment for what `get_d20()` should pass to `send_response()`.
 

@@ -168,25 +168,34 @@ void get_file(int fd, struct cache *cache, char *request_path)
 {
   char filepath[4096];
   struct file_data *filedata;
+  struct cache_entry *entry;
   char *mime_type;
 
-  // Fetch the cat.jpeg file
   snprintf(filepath, sizeof filepath, "%s%s", SERVER_ROOT, request_path);
-  filedata = file_load(filepath);
 
-  if (filedata == NULL)
+  entry = cache_get(cache, filepath);
+
+  if (entry != NULL)
   {
-    // TODO: make this non-fatal
-    fprintf(stderr, "cannot find file %s\n", request_path);
-    exit(3);
+    send_response(fd, "HTTP/1.1 200 FOUND", entry->content_type, entry->content, entry->content_length);
   }
+  else
+  {
+    filedata = file_load(filepath);
 
-  mime_type = mime_type_get(filepath);
-  printf("mime_type: %s", mime_type);
+    if (filedata == NULL)
+    {
+      resp_404(fd);
+      return;
+    }
 
-  send_response(fd, "HTTP/1.1 200 FOUND", mime_type, filedata->data, filedata->size);
+    mime_type = mime_type_get(filepath);
+    printf("mime_type: %s", mime_type);
 
-  file_free(filedata);
+    send_response(fd, "HTTP/1.1 200 FOUND", mime_type, filedata->data, filedata->size);
+
+    file_free(filedata);
+  }
 }
 
 /**
@@ -227,19 +236,16 @@ void handle_http_request(int fd, struct cache *cache)
   ///////////////////
 
   // Read the first two components of the first line of the request
-
   char method[200];
   char path[8192];
   char protocol[200];
-  // char needle[11] = "serverroot";
-  // char *ret;
 
   sscanf(request, "%s %s %s", method, path, protocol);
 
   printf("request: %s", request);
   printf("method: %s\n", method);
   printf("path: %s\n", path);
-  printf("protocol ---: %s\n", protocol);
+  printf("protocol: %s\n", protocol);
 
   // If GET, handle the get endpoints
   //    Check if it's /d20 and handle that special case
@@ -247,15 +253,9 @@ void handle_http_request(int fd, struct cache *cache)
 
   if (strcmp(method, "GET") == 0)
   {
-    // printf("needle: %s\n", needle);
-    printf("GET is this the value -----\n");
-
-    // ret = strstr(path, needle);
-    // printf("ret: %s\n", ret);
-    // printf("after ret\n");
+    printf("GET is this the value\n");
     if (strcmp(path, "/d20") == 0)
     {
-      // printf("/d20\n");
       get_d20(fd);
     }
     else if (strcmp(path, "/cat") == 0)
